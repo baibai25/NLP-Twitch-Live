@@ -1,36 +1,48 @@
-import argparse
+import argparse, os
 from polyglot.detect import Detector
 import pandas as pd
-from collections import Counter
+import matplotlib.pyplot as plt
 
 class Lang_Detector():
-    def __init__(self, data_path):
-        self.data_path = data_path
-        self.data = self.load_data()
+    def __init__(self):
+        self.parser = argparse.ArgumentParser()
+        self.parser.add_argument('data', help='Dataset path')
+        self.df = self.load_data()
+        self.detect_lang()
     
     def load_data(self):
-        with open(self.data_path, 'r', encoding='utf_8') as f:
-            data = [i.rstrip('\n') for i in f]
-
-        return data
+        args = self.parser.parse_args()
+        df = pd.read_csv(args.data)
+        return df
 
     def detect_lang(self):
-        result = []
-        for line in self.data:
-            lang = Detector(line, quiet=True).language.name
-            result.append([line, lang])
+        comment_df = self.df[self.df['emoticon_id'] == 'No_id']
+        comment_df = comment_df['comment'].astype(str)
 
+        result = []
+        for line in comment_df:
+            lang = Detector(line, quiet=True).language.code
+            result.append([line, lang])
         self.save(result)
     
     def save(self, result):
-        result = pd.DataFrame(result)
-        print(Counter(result[1]))
-        result.to_csv('lang.csv', index=False, header=False)
+        os.makedirs('./result', exist_ok=True)
+
+        # Emotes
+        emoticon_df = self.df[self.df['emoticon_id'] != 'No_id']
+        plt.figure(figsize=(10, 5), dpi=100)
+        plt.tight_layout()
+        plt.title('Top 20 Emotes')
+        emoticon_df['comment'].value_counts()[:20].plot(kind="bar")
+        plt.savefig('./result/emotes.png')
+
+        # Comments
+        result_df = pd.DataFrame(result)
+        plt.figure(figsize=(6, 5), dpi=100)
+        plt.tight_layout()
+        plt.title('Top 5 Languages')
+        result_df[result_df.columns[1]].value_counts()[:5].plot(kind="bar")
+        plt.savefig('./result/lang.png')
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('data', help='Dataset path')
-    args = parser.parse_args()
-    data_path = args.data
-    data = Lang_Detector(data_path)
-    data.detect_lang()
+    Lang_Detector()
