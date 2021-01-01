@@ -25,10 +25,10 @@ python detect_lang.py ./data/comment_data.csv
 preparing
 
 ## Result images
-<img src="./result/lang.png" width=100%>
-<img src="./result/emotes.png" width=100%>
-<img src="./result/freq_en.png" width=100%>
-<img src="./result/collocation_network.png" width=100%>
+<img src="./img/lang.png" width=100%>
+<img src="./img/emotes.png" width=100%>
+<img src="./img/freq_en.png" width=100%>
+<img src="./img/collocation_network.png" width=100%>
 
 ## Previous work
 https://github.com/baibai25/NLP-YouTube-Live
