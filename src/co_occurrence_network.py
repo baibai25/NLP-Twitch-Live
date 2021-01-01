@@ -35,8 +35,8 @@ def plot_network(data, edge_threshold, random_state):
     nx.draw_networkx_nodes(G, pos, node_color=list(pr.values()), cmap=plt.cm.Reds, alpha=0.7, node_size=[60000*v for v in pr.values()])
     edge_width = [d['weight'] * 100 for (u, v, d) in G.edges(data=True)]
     nx.draw_networkx_edges(G, pos, alpha=0.4, edge_color='darkgrey', width=edge_width)
-    nx.draw_networkx_labels(G, pos, fontsize=14, font_family='Noto Sans CJK JP', font_weight='bold')
+    nx.draw_networkx_labels(G, pos, font_size=14, font_weight='bold')
     
     plt.axis('off')
-    plt.savefig('./collocation_network.png', dpi=100)
+    plt.savefig('./result/collocation_network.png', dpi=100)
     plt.show()
