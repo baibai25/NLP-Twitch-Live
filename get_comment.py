@@ -1,6 +1,7 @@
 import argparse
 import twitch
 import pandas as pd
+import numpy as np
 import re
 import neologdn
 import emoji
@@ -40,10 +41,9 @@ class GetClass():
     
     def preprocessing(self):
         df = pd.DataFrame({"comment": self.comments, "emoticon_id": self.emoticons})
-        df.drop(df[df['comment'] == ' '].index, inplace=True)
         
         tmp = []
-        for line in df['comment']:
+        for line in df["comment"]:
             line = neologdn.normalize(line)
             line = re.sub(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-]+', '', line)
             line = re.sub(r'[!-/:-@[-`{-~]', r' ', line)
@@ -51,8 +51,10 @@ class GetClass():
             line = ''.join(['' if c in emoji.UNICODE_EMOJI else c for c in line])
             tmp.append(line)
 
-        df['comment'] = tmp
+        df["comment"] = tmp
         del tmp
+        df.replace(r'^\s*$', np.nan, regex=True, inplace=True)
+        df.dropna(inplace=True)
         return df
 
     def export_df(self):
